@@ -1,0 +1,36 @@
+# Python bytecode files
+*.pyc
+*.pyo
+__pycache__/
+
+# Virtual environment directory
+venv/
+env/
+*.env
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+*.eggs/
+
+# Test and coverage reports
+*.coverage
+*.coverage.*
+nosetests.xml
+coverage.xml
+*.hypothesis/
+*.tox/
+*.nox/
+
+# PyCharm project files
+.idea/
+
+# VS Code project files
+.vscode/
+
+# macOS system files
+.DS_Store
+
+# Windows system files
+Thumbs.db
