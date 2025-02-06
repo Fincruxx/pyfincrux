@@ -12,6 +12,8 @@ class Fincrux:
     _default_login_uri = "https://fincrux.devharshit.in/api/auth/login"
 
     _routes = {
+        "company.all": "/api/all_companies",
+        "company.search": "/api/search/{query}",
         "company.financials": "/api/financials/{company_trading_symbol}",
     }
 
@@ -21,6 +23,27 @@ class Fincrux:
         """
         self.root = root or self._default_root_uri
         self.api_key = api_key
+
+    def all_companies(self):
+        """
+        Fetches a list of all companies from the Fincrux API.
+
+        Returns:
+            list: A list of company data in JSON format.
+        """
+        return self._get("company.all")['data']
+
+    def search_company(self, query):
+        """
+        Searches for companies by name.
+
+        Args:
+            query (str): The name of the company to search for.
+
+        Returns:
+            list: A list of company data in JSON format.
+        """
+        return self._get("company.search", url_args={"query": query})['search_results']
 
     def get_company_financials(self, company_trading_symbol):
         """
