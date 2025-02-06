@@ -1,0 +1,8 @@
+__title__ = "Fincrux"
+__description__ = "The official Python client library for the Fincrux APIs"
+__url__ = "https://fincrux.devharshit.in"
+__download_url__ = "https://github.com/Fincruxx/pyfincrux"
+__version__ = "0.1.2"
+__author__ = "Harshit Bansal"
+__author_email__ = "harshitbansal587@gmail.com"
+__license__ = "MIT"

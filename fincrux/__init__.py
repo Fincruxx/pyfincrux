@@ -1,1 +1,1 @@
-from .api import FincruxAPI
+from .api import Fincrux
