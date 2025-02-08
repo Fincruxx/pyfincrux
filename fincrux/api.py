@@ -11,10 +11,13 @@ class Fincrux:
     _default_root_uri = "https://api.fincrux.devharshit.in"
     _default_login_uri = "https://fincrux.devharshit.in/api/auth/login"
 
+    VALID_INTERVALS = {"1minute", "30minutes", "day", "week", "month"}
+
     _routes = {
         "company.all": "/api/all_companies",
         "company.search": "/api/search/{query}",
         "company.financials": "/api/financials/{company_trading_symbol}",
+        "company.historicals": "/api/historicals/{company_trading_symbol}",
     }
 
     def __init__(self, api_key, root=None):
@@ -33,7 +36,7 @@ class Fincrux:
         """
         return self._get("company.all")['data']
 
-    def search_company(self, query):
+    def search_company(self, query: str):
         """
         Searches for companies by name.
 
@@ -45,7 +48,7 @@ class Fincrux:
         """
         return self._get("company.search", url_args={"query": query})['search_results']
 
-    def get_company_financials(self, company_trading_symbol):
+    def get_company_financials(self, company_trading_symbol: str):
         """
         Fetches financials for the specified company from the Fincrux API.
 
@@ -55,7 +58,35 @@ class Fincrux:
         Returns:
             dict: The financial data for the company in JSON format.
         """
-        return self._get("company.financials", url_args={"company_trading_symbol": company_trading_symbol})
+        return self._get(
+            "company.financials",
+            url_args={"company_trading_symbol": company_trading_symbol}
+        )
+
+    def get_company_historicals(self, company_trading_symbol: str, interval: str = "day", from_date: str = None, to_date: str = None):
+        """
+        Fetches historical data for the specified company from the Fincrux API.
+
+        Args:
+            company_trading_symbol (str): The ID of the company to get historical data for.
+
+        Returns:
+            list: The historical data for the company in JSON format.
+        """
+
+        if interval not in self.VALID_INTERVALS:
+            raise ValueError(
+                f"Invalid interval. Choose from: {self.VALID_INTERVALS}")
+        response = self._get(
+            "company.historicals",
+            url_args={"company_trading_symbol": company_trading_symbol},
+            params={"interval": interval,
+                    "from_date": from_date, "to_date": to_date}
+        )
+        if response['success'] == "true":
+            return response['data']
+        else:
+            raise ValueError(str(response['message']))
 
     def _user_agent(self):
         return (__title__ + "-python/").capitalize() + __version__
