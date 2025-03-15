@@ -8,8 +8,8 @@ log = logging.getLogger(__name__)
 
 
 class Fincrux:
-    _default_root_uri = "https://api.fincrux.devharshit.in"
-    _default_login_uri = "https://fincrux.devharshit.in/api/auth/login"
+    _default_root_uri = "https://api.fincrux.org"
+    _default_login_uri = "https://fincrux.org/api/auth/login"
 
     VALID_INTERVALS = {"1minute", "30minutes", "day", "week", "month"}
 
