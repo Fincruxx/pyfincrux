@@ -34,3 +34,6 @@ coverage.xml
 
 # Windows system files
 Thumbs.db
+
+# Publish files
+pypirc
