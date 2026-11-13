@@ -14,6 +14,7 @@ class Fincrux:
 
     VALID_INTERVALS = {"1minute", "30minutes", "day", "week", "month"}
     VALID_MARKET_INTERVALS = {"1D", "1M"}
+    VALID_STATEMENT_TYPES = {"standalone", "consolidated"}
     VALID_FII_DATA_TYPES = {
         "index_futures",
         "stock_futures",
@@ -26,6 +27,8 @@ class Fincrux:
         "company.all": "/api/all_companies",
         "company.search": "/api/search/{query}",
         "company.financials": "/api/financials/{company_trading_symbol}",
+        "company.filings": "/api/filings/{company_trading_symbol}",
+        "company.news": "/api/news/{company_trading_symbol}",
         "company.historicals": "/api/historicals/{company_trading_symbol}",
         "company.corporate_actions": "/api/corporate-actions/{company_trading_symbol}",
         "company.competitors": "/api/competitors/{company_trading_symbol}",
@@ -63,20 +66,82 @@ class Fincrux:
             "search_results"
         ]
 
-    def get_company_financials(self, company_trading_symbol: str):
+    def get_company_financials(
+        self,
+        company_trading_symbol: str,
+        statement_type: str = "standalone",
+    ):
         """
         Fetches financials for the specified company from the Fincrux API.
 
         Args:
             company_trading_symbol (str): The trading symbol of the company.
+            statement_type (str): ``standalone`` (default) or ``consolidated``.
 
         Returns:
             dict: The financial data for the company in JSON format.
         """
+        statement_type = str(statement_type).strip().lower()
+        if statement_type not in self.VALID_STATEMENT_TYPES:
+            raise ValueError(
+                "Invalid statement_type. Choose from: "
+                f"{sorted(self.VALID_STATEMENT_TYPES)}"
+            )
         return self._get(
             "company.financials",
             url_args={"company_trading_symbol": company_trading_symbol},
+            params={"statement_type": statement_type},
         )
+
+    def get_company_filings(
+        self,
+        company_trading_symbol: str,
+        force_update: bool = False,
+    ):
+        """
+        Fetches recent announcements and annual reports for the specified company.
+
+        Args:
+            company_trading_symbol (str): The trading symbol of the company.
+            force_update (bool): Bypass cache and refresh latest data.
+
+        Returns:
+            dict: ``announcements``, ``annual_reports`` and ``fetched_at``.
+        """
+        response = self._get(
+            "company.filings",
+            url_args={"company_trading_symbol": company_trading_symbol},
+            params={"force_update": str(force_update).lower()},
+        )
+        if response.get("success") == "true":
+            return response.get("data", response)
+        raise ValueError(str(response.get("message")))
+
+    def get_company_news(
+        self,
+        company_trading_symbol: str,
+        page_number: int = 1,
+        page_size: int = 20,
+    ):
+        """
+        Fetches recent news articles for the specified company.
+
+        Args:
+            company_trading_symbol (str): The trading symbol of the company.
+            page_number (int): Page number (1-100).
+            page_size (int): Records per page (1-100).
+
+        Returns:
+            dict: ``data`` plus pagination ``metadata`` and ``fetched_at``.
+        """
+        response = self._get(
+            "company.news",
+            url_args={"company_trading_symbol": company_trading_symbol},
+            params={"page_number": page_number, "page_size": page_size},
+        )
+        if "data" in response:
+            return response
+        raise ValueError(str(response.get("message")))
 
     def get_company_historicals(
         self,
