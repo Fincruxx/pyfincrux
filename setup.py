@@ -7,6 +7,7 @@ setup(
     install_requires=[
         "requests",
     ],
+    python_requires=">=3.10",
     test_suite="tests",
     author="Harshit Bansal",
     author_email="harshitbansal587@gmail.com",

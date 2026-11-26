@@ -4,6 +4,8 @@ Official Python client for the Fincrux API.
 
 ## Installation
 
+Requires Python 3.10 or newer.
+
 ```bash
 pip install fincrux
 ```
